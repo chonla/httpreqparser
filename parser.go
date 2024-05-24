@@ -11,7 +11,17 @@ import (
 	"github.com/chonla/goline"
 )
 
-func Parse(req string) (*http.Request, error) {
+type Parser interface {
+	Parse(req string) (*http.Request, error)
+}
+
+type HttpParser struct{}
+
+func New() Parser {
+	return &HttpParser{}
+}
+
+func (p *HttpParser) Parse(req string) (*http.Request, error) {
 	lines := goline.FromMultilineString(req)
 	if len(lines) == 0 {
 		return nil, errors.New("unexpected EOF")

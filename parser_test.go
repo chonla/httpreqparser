@@ -11,16 +11,20 @@ import (
 )
 
 func TestParseEmptyString(t *testing.T) {
+	parser := httpreqparser.New()
+
 	req := ""
-	result, err := httpreqparser.Parse(req)
+	result, err := parser.Parse(req)
 
 	assert.Equal(t, errors.New("unexpected http request"), err)
 	assert.Nil(t, result)
 }
 
 func TestParseGetWithImplicitHost(t *testing.T) {
+	parser := httpreqparser.New()
+
 	req := `GET http://localhost:1234/path HTTP/1.0`
-	result, err := httpreqparser.Parse(req)
+	result, err := parser.Parse(req)
 
 	assert.Nil(t, err)
 	assert.Equal(t, http.MethodGet, result.Method)
@@ -28,9 +32,11 @@ func TestParseGetWithImplicitHost(t *testing.T) {
 }
 
 func TestParseGetWithExplicitHostInHeader(t *testing.T) {
+	parser := httpreqparser.New()
+
 	req := `GET /path HTTP/1.0
 Host: localhost:1234`
-	result, err := httpreqparser.Parse(req)
+	result, err := parser.Parse(req)
 
 	assert.Nil(t, err)
 	assert.Equal(t, http.MethodGet, result.Method)
@@ -38,12 +44,14 @@ Host: localhost:1234`
 }
 
 func TestParseHTTPSPostWithImplicitHost(t *testing.T) {
+	parser := httpreqparser.New()
+
 	req := `POST https://localhost:1234/path HTTP/1.0
 Content-Type: application/json
 Content-Length: 15
 
 {"key":"value"}`
-	result, err := httpreqparser.Parse(req)
+	result, err := parser.Parse(req)
 
 	expectedBody := []byte(`{"key":"value"}`)
 	defer result.Body.Close()
@@ -56,12 +64,14 @@ Content-Length: 15
 }
 
 func TestParseHTTPSPutWithImplicitHost(t *testing.T) {
+	parser := httpreqparser.New()
+
 	req := `PUT https://localhost:1234/path HTTP/1.0
 Content-Type: application/json
 Content-Length: 15
 
 {"key":"value"}`
-	result, err := httpreqparser.Parse(req)
+	result, err := parser.Parse(req)
 
 	expectedBody := []byte(`{"key":"value"}`)
 	defer result.Body.Close()
@@ -74,8 +84,10 @@ Content-Length: 15
 }
 
 func TestParseHTTPSHEADWithImplicitHost(t *testing.T) {
+	parser := httpreqparser.New()
+
 	req := `HEAD https://localhost:1234/path HTTP/1.0`
-	result, err := httpreqparser.Parse(req)
+	result, err := parser.Parse(req)
 
 	assert.Nil(t, err)
 	assert.Equal(t, http.MethodHead, result.Method)
@@ -83,8 +95,10 @@ func TestParseHTTPSHEADWithImplicitHost(t *testing.T) {
 }
 
 func TestParseHTTPSOPTIONSWithImplicitHost(t *testing.T) {
+	parser := httpreqparser.New()
+
 	req := `OPTIONS https://localhost:1234/path HTTP/1.0`
-	result, err := httpreqparser.Parse(req)
+	result, err := parser.Parse(req)
 
 	assert.Nil(t, err)
 	assert.Equal(t, http.MethodOptions, result.Method)
@@ -92,8 +106,10 @@ func TestParseHTTPSOPTIONSWithImplicitHost(t *testing.T) {
 }
 
 func TestParseHTTPSTRACEWithImplicitHost(t *testing.T) {
+	parser := httpreqparser.New()
+
 	req := `TRACE https://localhost:1234/path HTTP/1.0`
-	result, err := httpreqparser.Parse(req)
+	result, err := parser.Parse(req)
 
 	assert.Nil(t, err)
 	assert.Equal(t, http.MethodTrace, result.Method)
